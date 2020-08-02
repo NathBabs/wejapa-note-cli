@@ -6,6 +6,7 @@
 const chalk =  require('chalk');
 const yargs = require('yargs');
 const notes = require('./notes.js');
+//const { displayNotes } = require('./notes.js');
 
 const log = console.log;
 
@@ -27,10 +28,15 @@ yargs.command({
             describe: `Note's main content`,
             demandOption: true,
             type: 'string'
+        },
+        directory: {
+            describe: 'Folder name of new note',
+            demandOption: true,
+            type: 'string'
         }
     },
     handler(argv) {
-        notes.addNote(argv.title, argv.body);
+        notes.addNote(argv.directory, argv.title, argv.body);
         // log('Title: ' + argv.title);
         // log("Notes' Body: " + argv.body);
     }
@@ -45,10 +51,15 @@ yargs.command({
             describe: 'Note Title',
             demandOption: true,
             type: 'string'
+        },
+        directory: {
+            describe: 'Folder name of note to be removed',
+            demandOption: true,
+            type: 'string'
         }
     },
     handler(argv) {
-        notes.removeNotes(argv.title);
+        notes.removeNotes(argv.directory, argv.title);
         //log('Removing the note!');
     }
 });
@@ -58,7 +69,8 @@ yargs.command({
     describe: 'list all notes',
     handler() {
         //log('Listing all notes!');
-        notes.listNotes();
+        const note = notes.listNotes();
+        notes.displayNotes(note);
     }
 });
 
@@ -71,14 +83,35 @@ yargs.command({
             describe: 'Note title',
             demandOption: true,
             type: 'string'
+        },
+        directory: {
+            describe: 'Folder name of note to read',
+            demandOption: true,
+            type: 'string'
         }
     },
     handler(argv) {
-        notes.readNote(argv.title);
+        notes.readNote(argv.directory, argv.title);
     }
 });
 
-//add, remove, read, list
+//create a delete directory command
+yargs.command({
+    command: 'delete',
+    describe: 'delete a directory of notes',
+    builder: {
+        directory: {
+            describe: 'Directory/Folder to be deleted',
+            demandOption: true,
+            type: 'string'
+        }
+    },
+    handler(argv) {
+        notes.deleteDir(argv.directory);
+    }
+});
+
+//add, remove, read, list, delete
 
 
 yargs.parse();
